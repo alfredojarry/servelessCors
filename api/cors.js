@@ -11,12 +11,14 @@ export default async function handler(request, response) {
 
   try {
     const { status, headers, data } = await getRequest(url);
-    
-    // Vérification du type de contenu dans la réponse d'origine
-    const contentType = headers['content-type'] || 'application/octet-stream';
-    response.setHeader('Content-Type', contentType); // Utilisation du même type que la source
+
+    // Ajout des headers CORS
+    response.setHeader('Access-Control-Allow-Origin', '*');
+    response.setHeader('Content-Type', headers['content-type'] || 'application/octet-stream');
+    response.setHeader('Content-Disposition', 'attachment; filename="fichier.mp3"');
+
     response.status(status).send(data);
-    
+
   } catch (error) {
     response.status(500).send({ error: 'Internal server error', details: error.message });
   }
@@ -26,13 +28,13 @@ export default async function handler(request, response) {
       const req = https.get(url, (resp) => {
         let data = [];
         resp.on('data', (chunk) => {
-          data.push(chunk); // Stockage des chunks binaires
+          data.push(chunk);
         });
         resp.on('end', () => {
           resolve({
             status: resp.statusCode,
             headers: resp.headers,
-            data: Buffer.concat(data) // Conversion des chunks en buffer binaire
+            data: Buffer.concat(data)
           });
         });
       }).on('error', (err) => {
