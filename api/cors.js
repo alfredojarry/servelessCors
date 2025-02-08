@@ -15,7 +15,6 @@ export default async function handler(request, response) {
     // Ajout des headers CORS
     response.setHeader('Access-Control-Allow-Origin', '*');
     response.setHeader('Content-Type', headers['content-type'] || 'application/octet-stream');
-    response.setHeader('Content-Disposition', 'attachment; filename="fichier.mp3"');
 
     response.status(status).send(data);
 
